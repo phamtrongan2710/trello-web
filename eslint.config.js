@@ -24,6 +24,7 @@ export default [
       'react-refresh': reactRefresh
     },
     rules: {
+      // React
       ...js.configs.recommended.rules,
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
@@ -36,6 +37,15 @@ export default [
       'react/prop-types': 0,
       'react/display-name': 0,
 
+      // MUI
+      'no-restricted-imports': [
+        'error',
+        {
+          'patterns': ['@mui/*/*/*']
+        }
+      ],
+
+      // Common
       'no-console': 1,
       'no-lonely-if': 1,
       'no-unused-vars': 1,
