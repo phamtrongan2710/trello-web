@@ -10,10 +10,14 @@ import {
   useSensors,
   DragOverlay,
   defaultDropAnimationSideEffects,
-  closestCorners
+  closestCorners,
+  closestCenter,
+  pointerWithin,
+  rectIntersection,
+  getFirstCollision
 } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { cloneDeep } from 'lodash'
 
 import Column from './ListColumns/Column/Column'
@@ -45,6 +49,9 @@ function BoardContent({ board }) {
   const [activeDragItemType, setActiveDragItemType] = useState(null)
   const [activeDragItemData, setActiveDragItemData] = useState(null)
   const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] = useState(null)
+
+  // Điểm va chạm cuối cùng trước đó (xử lý thuật toán phát hiện va chạm)
+  const lastOverId = useRef(null)
 
   useEffect(() => {
     setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'))
@@ -250,6 +257,42 @@ function BoardContent({ board }) {
   }
 
   const customDropAnimation = { sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: '0.5' } } }) }
+  // Custom lại chiến lược / thuật toán phát hiện va chạm tối ưu cho việc kéo thả giữa card giữa nhiều columns
+  // Trường hợp kéo column thì dùng closestCorners là chuẩn nhất
+  const collisionDetectionStrategy = useCallback((args) => {
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+      return closestCorners({ ...args })
+    }
+
+    // Tìm các điểm va cham ~ intersection với con trỏ
+    const pointerIntersections = pointerWithin(args)
+    const intersections = !!pointerIntersections?.length
+      ? pointerIntersections
+      : rectIntersection(args)
+
+    // Tìm overId đầu tiên trong đám intersections đầu tiên
+    let overId = getFirstCollision(intersections, 'id')
+
+    if (overId) {
+      // Fix bug flickering
+      // Nếu over là column thì sẽ tìm tới cái cardId gần nhất bên trong khu vực va chạm dựa vào thuật toán phát hiện va
+      // chạm  closestCenter hoặc closestCorners đều được. Tuy nhiên, ở đây dùng closestCenter mượt hơn.
+      const intersectedColumn = orderedColumns.find(column => column._id === overId)
+      if (intersectedColumn) {
+        overId = closestCenter({
+          ...args,
+          droppableContainers: args.droppableContainers.filter(container => {
+            return container.id !== overId && intersectedColumn?.cardOrderIds?.includes(container.id)
+          })
+        })[0]?.id
+      }
+      lastOverId.current = overId
+      return [{ id: overId }]
+    }
+
+    return lastOverId.current ? [{ id: lastOverId.current }] : []
+
+  }, [activeDragItemType, orderedColumns])
 
   return (
     <DndContext
@@ -258,7 +301,9 @@ function BoardContent({ board }) {
       // thuật toán phát hiện va chạm (nếu không có nó thì card với cover lớn sẽ không kéo qua column được vì lúc này nó
       // đang bị conflict giữa card và column)
       // chúng ta dùng closestCorners thay vì closestCenter
-      collisionDetection={closestCorners}
+      // Note: Nếu chỉ dùng closestCorners thì sẽ có có bug flickering và sai lệch dữ liệu
+      // collisionDetection={closestCorners}
+      collisionDetection={collisionDetectionStrategy}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
