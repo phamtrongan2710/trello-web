@@ -5,7 +5,7 @@
 export const mockData = {
   board: {
     _id: 'board-id-01',
-    title: 'TrungQuanDev MERN Stack Board',
+    title: 'MERN Stack Board',
     description: 'Pro MERN stack Course',
     type: 'public', // 'private'
     ownerIds: [], // Những users là Admin của board
@@ -16,7 +16,7 @@ export const mockData = {
         _id: 'column-id-01',
         boardId: 'board-id-01',
         title: 'To Do Column 01',
-        cardOrderIds: ['card-id-04', 'card-id-02', 'card-id-03', 'card-id-01', 'card-id-05', 'card-id-06', 'card-id-07'],
+        cardOrderIds: ['card-id-01', 'card-id-02', 'card-id-03', 'card-id-04', 'card-id-05', 'card-id-06', 'card-id-07'],
         cards: [
           {
             _id: 'card-id-01',

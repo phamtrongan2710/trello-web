@@ -3,11 +3,11 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import Divider from '@mui/material/Divider'
+// import Divider from '@mui/material/Divider'
 import ListItemText from '@mui/material/ListItemText'
-import ListItemIcon from '@mui/material/ListItemIcon'
+// import ListItemIcon from '@mui/material/ListItemIcon'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import Check from '@mui/icons-material/Check'
+// import Check from '@mui/icons-material/Check'
 
 function Recent() {
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -41,7 +41,7 @@ function Recent() {
           'aria-labelledby': 'basic-button-recent'
         }}
       >
-        <MenuItem>
+        {/* <MenuItem>
           <ListItemText inset>Single</ListItemText>
         </MenuItem>
         <MenuItem>
@@ -66,6 +66,9 @@ function Recent() {
         <Divider />
         <MenuItem>
           <ListItemText>Custom spacing...</ListItemText>
+        </MenuItem> */}
+        <MenuItem>
+          <ListItemText>Coming soon</ListItemText>
         </MenuItem>
       </Menu>
     </Box>

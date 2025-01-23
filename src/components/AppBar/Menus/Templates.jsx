@@ -3,14 +3,14 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import Divider from '@mui/material/Divider'
+// import Divider from '@mui/material/Divider'
 import ListItemText from '@mui/material/ListItemText'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import Typography from '@mui/material/Typography'
-import ContentCut from '@mui/icons-material/ContentCut'
-import ContentCopy from '@mui/icons-material/ContentCopy'
-import ContentPaste from '@mui/icons-material/ContentPaste'
-import Cloud from '@mui/icons-material/Cloud'
+// import ListItemIcon from '@mui/material/ListItemIcon'
+// import Typography from '@mui/material/Typography'
+// import ContentCut from '@mui/icons-material/ContentCut'
+// import ContentCopy from '@mui/icons-material/ContentCopy'
+// import ContentPaste from '@mui/icons-material/ContentPaste'
+// import Cloud from '@mui/icons-material/Cloud'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 function Templates() {
@@ -45,7 +45,7 @@ function Templates() {
           'aria-labelledby': 'basic-button-templates'
         }}
       >
-        <MenuItem>
+        {/* <MenuItem>
           <ListItemIcon onClick={handleClose}>
             <ContentCut fontSize="small" />
           </ListItemIcon>
@@ -78,6 +78,9 @@ function Templates() {
             <Cloud fontSize="small" />
           </ListItemIcon>
           <ListItemText>Web Clipboard</ListItemText>
+        </MenuItem> */}
+        <MenuItem>
+          <ListItemText>Coming soon</ListItemText>
         </MenuItem>
       </Menu>
     </Box>
