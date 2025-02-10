@@ -23,6 +23,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
 import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
+import { toast } from 'react-toastify'
 
 function Columns({ column }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -54,7 +55,7 @@ function Columns({ column }) {
   const [newCardTitle, setNewCardTitle] = useState('')
   const addNewCard = () => {
     if (!newCardTitle) {
-      // console.error('Card title is required')
+      toast.error('Card title is required')
       return
     }
     // console.log(newCardTitle)
