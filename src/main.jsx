@@ -16,7 +16,7 @@ createRoot(document.getElementById('root')).render(
     <App />
     <ToastContainer
       position="bottom-left"
-      theme="light"
+      theme="colored"
       autoClose={5000}
     />
   </CssVarsProvider>
