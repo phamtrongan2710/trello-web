@@ -4,7 +4,12 @@ import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
 // import { mockData } from '~/apis/mock-data'
-import { fetchBoardDetailsAPI, createNewCardAPI, createNewColumnAPI } from '~/apis'
+import {
+  fetchBoardDetailsAPI,
+  createNewCardAPI,
+  createNewColumnAPI,
+  updateBoardDetailsAPI
+} from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
 
@@ -27,7 +32,7 @@ function Board() {
     })
   }, [])
 
-  // Function này có nhiệm vụ gọi API tạo mới column và tạo mới state board 
+  // Function này có nhiệm vụ gọi API tạo mới column và tạo mới state board
   const createNewColumn = async (newColumnData) => {
     const createdColumn = await createNewColumnAPI({
       ...newColumnData,
@@ -58,7 +63,7 @@ function Board() {
     setBoard(newBoard)
   }
 
-  // Function này có nhiệm vụ gọi API tạo mới card và tạo mới state board 
+  // Function này có nhiệm vụ gọi API tạo mới card và tạo mới state board
   const createNewCard = async (newCardData) => {
     const createdCard = await createNewCardAPI({
       ...newCardData,
@@ -75,6 +80,19 @@ function Board() {
     setBoard(newBoard)
   }
 
+  // Function này có nhiệm vụ gọi API di chuyển column và tạo mới state board
+  const moveColumn = async (dndOrderedColumns) => {
+    // Cập nhật lại state board
+    const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
+    const newBoard = { ...board }
+    newBoard.columns = dndOrderedColumns
+    newBoard.columnOrderIds = dndOrderedColumnsIds
+    setBoard(newBoard)
+
+    // Gọi API update board
+    await updateBoardDetailsAPI(newBoard._id, { columnOrderIds: dndOrderedColumnsIds })
+  }
+
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
       <AppBar />
@@ -83,6 +101,7 @@ function Board() {
         board={board}
         createNewColumn={createNewColumn}
         createNewCard={createNewCard}
+        moveColumn={moveColumn}
       />
     </Container>
   )
