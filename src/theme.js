@@ -9,6 +9,9 @@ const COLUMN_FOOTER_HEIGHT = '56px'
 
 // Create a theme instance.
 const theme = extendTheme({
+  shape: {
+    borderRadius: 16
+  },
   trello: {
     appBarHeight: APP_BAR_HEIGHT,
     boardBarHeight: BOARD_BAR_HEIGHT,
@@ -62,7 +65,7 @@ const theme = extendTheme({
     MuiInputLabel: {
       styleOverrides: {
         root: ({ theme }) => ({
-          color: theme.palette.primary.main,
+          // color: theme.palette.primary.main,
           fontSize: '0.875rem'
         })
       }
@@ -70,7 +73,7 @@ const theme = extendTheme({
     MuiTypography: {
       styleOverrides: {
         root: ({ theme }) => ({
-          color: theme.palette.primary.main,
+          // color: theme.palette.primary.main,
           '&.MuiTypography-body1': { fontSize: '0.875rem' }
         })
       }
@@ -79,7 +82,7 @@ const theme = extendTheme({
       styleOverrides: {
         root: ({ theme }) => {
           return {
-            color: theme.palette.primary.main,
+            // color: theme.palette.primary.main,
             fontSize: '0.875rem',
             // '.MuiOutlinedInput-notchedOutline': {
             //   borderColor: theme.palette.primary.light
