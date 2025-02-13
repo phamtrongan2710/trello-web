@@ -23,8 +23,9 @@ import { useState } from 'react'
 import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
+import { useConfirm } from 'material-ui-confirm'
 
-function Columns({ column, createNewCard }) {
+function Columns({ column, createNewCard, deleteColumnDetails }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
     data: { ...column }
@@ -71,6 +72,19 @@ function Columns({ column, createNewCard }) {
     setNewCardTitle('')
   }
 
+  // Xử lý xóa một column và cards bên trong nó
+  const confirmDeleteColumn = useConfirm()
+  const handleDeleteColumn = () => {
+    confirmDeleteColumn({
+      title: 'Delete Column?',
+      content: `Please type "${column.title}" to confirm your action.`,
+      confirmationKeyword: column.title
+
+    }).then(() => {
+      deleteColumnDetails(column._id)
+    }).catch(() => { })
+  }
+
   return (
     // Phải bọc div ở đây vì vấn đề chiều cao của column khi kéo thả sẽ có bug kiểu Flickering
     <div ref={setNodeRef} style={dndKitColumnStyles} {...attributes}>
@@ -81,7 +95,7 @@ function Columns({ column, createNewCard }) {
           maxWidth: '300px',
           bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : '#ebecf0'),
           ml: 2,
-          borderRadius: '6px',
+          borderRadius: '16px',
           height: 'fit-content',
           maxHeight: (theme) => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)})`
         }}
@@ -97,10 +111,12 @@ function Columns({ column, createNewCard }) {
           <Typography variant='h6' sx={{
             fontSize: '1rem',
             fontWeight: 'bold',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            color: (theme) => theme.palette.primary.main
           }}>
             {column?.title}
-          </Typography>
+          </ Typography>
+
           <Box>
             <Tooltip title="More options">
               <ExpandMoreIcon
@@ -118,33 +134,50 @@ function Columns({ column, createNewCard }) {
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
+              onClick={handleClose}
               MenuListProps={{
                 'aria-labelledby': 'basic-column-dropdown'
               }}
             >
-              <MenuItem>
-                <ListItemIcon onClick={handleClose}><AddCardIcon fontSize="small" /></ListItemIcon>
+              <MenuItem
+                sx={{
+                  '&:hover': {
+                    color: 'success.light',
+                    '& .add-card-icon': { color: 'success.light' }
+                  }
+                }}
+                onClick={toggleNewCardForm}
+              >
+                <ListItemIcon><AddCardIcon className="add-card-icon" fontSize="small" /></ListItemIcon>
                 <ListItemText>Add new card</ListItemText>
               </MenuItem>
               <MenuItem>
-                <ListItemIcon onClick={handleClose}><ContentCut fontSize="small" /></ListItemIcon>
+                <ListItemIcon><ContentCut fontSize="small" /></ListItemIcon>
                 <ListItemText>Cut</ListItemText>
               </MenuItem>
               <MenuItem>
-                <ListItemIcon onClick={handleClose}><ContentCopy fontSize="small" /></ListItemIcon>
+                <ListItemIcon><ContentCopy fontSize="small" /></ListItemIcon>
                 <ListItemText>Copy</ListItemText>
               </MenuItem>
               <MenuItem>
-                <ListItemIcon onClick={handleClose}><ContentPaste fontSize="small" /></ListItemIcon>
+                <ListItemIcon><ContentPaste fontSize="small" /></ListItemIcon>
                 <ListItemText>Paste</ListItemText>
               </MenuItem>
 
               <Divider />
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon><DeleteForeverIcon fontSize="small" /></ListItemIcon>
-                <ListItemText>Remove this column</ListItemText>
+              <MenuItem
+                onClick={handleDeleteColumn}
+                sx={{
+                  '&:hover': {
+                    color: 'warning.dark',
+                    '& .delete-forever-icon': { color: 'warning.dark' }
+                  }
+                }}
+              >
+                <ListItemIcon><DeleteForeverIcon className="delete-forever-icon" fontSize="small" /></ListItemIcon>
+                <ListItemText>Delete this column</ListItemText>
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+              <MenuItem>
                 <ListItemIcon><Cloud fontSize="small" /></ListItemIcon>
                 <ListItemText>Archive this column</ListItemText>
               </MenuItem>
