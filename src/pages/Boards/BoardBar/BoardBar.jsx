@@ -105,19 +105,32 @@ function BoardBar({ board }) {
           <Tooltip title="An Pham">
             <Avatar
               alt="An Pham"
-              src="https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/393808016_3195039774123590_6810170358814726216_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=LuGafqFkapAQ7kNvgEz11Vv&_nc_zt=23&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=Aj8MKP4_TZhxmTZrJp79sL9&oh=00_AYCATXKVK7ITNAkUFrqwzei3dZT3DUDyjLETWdrimXwZVQ&oe=676E522A" />
+            // src="https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/393808016_3195039774123590_6810170358814726216_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=LuGafqFkapAQ7kNvgEz11Vv&_nc_zt=23&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=Aj8MKP4_TZhxmTZrJp79sL9&oh=00_AYCATXKVK7ITNAkUFrqwzei3dZT3DUDyjLETWdrimXwZVQ&oe=676E522A" 
+            />
           </Tooltip>
           <Tooltip>
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Avatar
+              alt="Remy Sharp"
+            // src="/static/images/avatar/1.jpg"
+            />
           </Tooltip>
           <Tooltip>
-            <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
+            <Avatar
+              alt="Travis Howard"
+            // src="/static/images/avatar/2.jpg"
+            />
           </Tooltip>
           <Tooltip>
-            <Avatar alt="Agnes Walker" src="/static/images/avatar/4.jpg" />
+            <Avatar
+              alt="Agnes Walker"
+            // src="/static/images/avatar/4.jpg"
+            />
           </Tooltip>
           <Tooltip>
-            <Avatar alt="Trevor Henderson" src="/static/images/avatar/5.jpg" />
+            <Avatar
+              alt="Trevor Henderson"
+            // src="/static/images/avatar/5.jpg"
+            />
           </Tooltip>
         </AvatarGroup>
       </Box>
