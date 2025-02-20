@@ -29,15 +29,16 @@ function Board() {
     const boardId = '67a3963c7fc4e7ceb018e44c'
     // call API
     fetchBoardDetailsAPI(boardId).then((board) => {
-      // sắp xếp thứ tự các column luôn ở đây trước khi đưa dữ liệu xuống bên dưới các component con
+      // sắp xếp thứ tự các column luôn ở đây trước khi đưa dữ liệu xuống bên dưới các component con (video 71)
       board.columns = mapOrder(board.columns, board.columnOrderIds, '_id')
 
       board.columns.forEach(column => {
-        // Tạo card placeholder cho column không chứ cards
+        // Tạo card placeholder cho column không chứ cards (video 69)
         if (isEmpty(column.cards)) {
           column.cards = [generatePlaceholderCard(column)]
           column.cardOrderIds = [generatePlaceholderCard(column)._id]
         } else {
+          // sắp xếp thứ tự các cards luôn ở đây trước khi đưa dữ liệu xuống bên dưới các component con (video 71)
           column.cards = mapOrder(column.cards, column.cardOrderIds, '_id')
         }
       })
