@@ -33,7 +33,7 @@ function BoardBar({ board }) {
       gap: 2,
       paddingX: 2,
       overflowX: 'auto',
-      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2'),
+      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#2c3e50' : '#1976d2'),
       '&::-webkit-scrollbar-track': { m: 2 }
     }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -105,7 +105,7 @@ function BoardBar({ board }) {
           <Tooltip title="An Pham">
             <Avatar
               alt="An Pham"
-            // src="https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/393808016_3195039774123590_6810170358814726216_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=LuGafqFkapAQ7kNvgEz11Vv&_nc_zt=23&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=Aj8MKP4_TZhxmTZrJp79sL9&oh=00_AYCATXKVK7ITNAkUFrqwzei3dZT3DUDyjLETWdrimXwZVQ&oe=676E522A" 
+            // src="https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/393808016_3195039774123590_6810170358814726216_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=LuGafqFkapAQ7kNvgEz11Vv&_nc_zt=23&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=Aj8MKP4_TZhxmTZrJp79sL9&oh=00_AYCATXKVK7ITNAkUFrqwzei3dZT3DUDyjLETWdrimXwZVQ&oe=676E522A"
             />
           </Tooltip>
           <Tooltip>

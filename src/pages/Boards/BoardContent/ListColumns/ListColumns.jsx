@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import Columns from './Column/Column'
+import Column from './Column/Column'
 import Button from '@mui/material/Button'
 import AddBoxIcon from '@mui/icons-material/AddBox'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
@@ -7,12 +7,24 @@ import { useState } from 'react'
 import { toast } from 'react-toastify'
 import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
+import { createNewColumnAPI } from '~/apis'
+import { generatePlaceholderCard } from '~/utils/formatters'
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard
+} from '~/redux/activeBoard/activeBoardSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { cloneDeep } from 'lodash'
 
-function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDetails }) {
+function ListColumns({ columns }) {
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
+
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
+
   const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.error('Column title is required')
@@ -24,14 +36,48 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDeta
       title: newColumnTitle
     }
 
-    /**
-     * Gọi lên props function createNewColumn ở component cha cao nhất boards/_id.jsx
-     * Lưu ý: sau này sẽ đưa dữ liệu Board ra ngoài Redux Global Store và lúc này
-     * chúng ta có thể gọi luôn API ở đây
-     * Sử dụng Redux như vậy thì code sẽ clean chuẩn chỉnh hơn
-     * */
+    // Gọi API tạo mới column và tạo mới state board
+    const createdColumn = await createNewColumnAPI({
+      ...newColumnData,
+      boardId: board._id
+    })
 
-    createNewColumn(newColumnData)
+    createdColumn.cards = [generatePlaceholderCard(createdColumn)]
+    createdColumn.cardOrderIds = [generatePlaceholderCard(createdColumn)._id]
+
+    // Cập nhật lại state board
+    // Cách thứ 2 nhanh hơn vì ít thao tác cấp phát bộ nhớ hơn
+
+    // const newBoard = {
+    //   ...board,
+    //   columns: [...board.columns, createdColumn],
+    //   columnsOrderIds: [...board.columnsOrderIds, createdColumn._id]
+    // }
+
+    /**
+     * Lưu ý: FE phải tự làm đúng lại state của board thay vì phải gọi lại API fetchBoardDetailsAPI
+     * Cách làm này phụ thuộc vào lựa chọn và đặc thù của dự án, có nơi thì BE sẽ hỗ trợ và trả về luôn toàn dữ liệu Board
+     * dù đây là API tạo column hay card => FE nhàn hơn
+     */
+
+    /**
+     * Đoạn này đang dính lỗi object is not extensible bởi dù đã copy/clone ra giá trị newBoard nhưng bản chất của spread operator là shallow copy, nên dính phải rules Immutability trong redux toolkit không dùng được hàm push (sửa giá trị mảng trực tiếp), cách đơn giản và nhanh gọn nhất ở trường hợp này là chúng ta dùng tới deep copy/clone toàn bộ cái board cho dễ hiểu và code ngắn hơn
+     * https://redux-toolkit.js.org/usage/immer-reducers#immutability-and-redux
+     */
+    // const newBoard = { ...board }
+    const newBoard = cloneDeep(board)
+    newBoard.columns.push(createdColumn)
+    newBoard.columnOrderIds.push(createdColumn._id)
+
+    /**
+     * Ngoài ra cách khác là dùng array.concat thay cho push như docs của redux toolkit ở trên vì push như đã nói nó sẽ thay đổi giá trị mảng trực tiếp, còn concat thì ghép mảng lại thành một mảng mới để chúng ta gán giá trị nên không không vấn đề gì
+     */
+    // const newBoard = { ...board }
+    // newBoard.columns = newBoard.columns.concat([createdColumn])
+    // newBoard.columnOrderIds = newBoard.columnOrderIds.concat([createdColumn._id])
+
+    // Cập nhật dữ liệu board vào trong redux store
+    dispatch(updateCurrentActiveBoard(newBoard))
 
     // Đóng trạng thái thêm column mới và clear input
     toggleNewColumnForm()
@@ -54,11 +100,11 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDeta
         display: 'flex',
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
-        {columns?.map(column => <Columns
-          key={column._id}
-          column={column}
-          createNewCard={createNewCard}
-          deleteColumnDetails={deleteColumnDetails} />)}
+        {columns?.map(column =>
+          <Column
+            key={column._id}
+            column={column}
+          />)}
 
         {/* Box add new column */}
         {!openNewColumnForm

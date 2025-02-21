@@ -24,8 +24,19 @@ import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
+import { createNewCardAPI, deleteColumnDetailsAPI } from '~/apis'
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard
+} from '~/redux/activeBoard/activeBoardSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { cloneDeep } from 'lodash'
 
-function Columns({ column, createNewCard, deleteColumnDetails }) {
+
+function Column({ column }) {
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
     data: { ...column }
@@ -53,6 +64,7 @@ function Columns({ column, createNewCard, deleteColumnDetails }) {
   const toggleNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
 
   const [newCardTitle, setNewCardTitle] = useState('')
+
   const addNewCard = async () => {
     if (!newCardTitle) {
       toast.error('Card title is required')
@@ -65,7 +77,32 @@ function Columns({ column, createNewCard, deleteColumnDetails }) {
       columnId: column._id
     }
 
-    createNewCard(newCardData)
+    // Gọi API tạo mới card và tạo mới state board
+    const createdCard = await createNewCardAPI({
+      ...newCardData,
+      boardId: board._id
+    })
+
+    // Cập nhật lại state board
+    // const newBoard = { ...board }
+    // Dùng cloneDeep, đã giải thích ở createNewColumn
+    const newBoard = cloneDeep(board)
+    const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
+
+    if (columnToUpdate) {
+      // Nếu column rỗng -> đang chứa 1 placeholder card
+      if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
+        columnToUpdate.cards = [createdCard]
+        columnToUpdate.cardOrderIds = [createdCard._id]
+
+      } else {
+        // Column đã có data thì push vào cuối mảng
+        columnToUpdate.cards.push(createdCard)
+        columnToUpdate.cardOrderIds.push(createdCard._id)
+      }
+    }
+    // setBoard(newBoard)
+    dispatch(updateCurrentActiveBoard(newBoard))
 
     // Đóng trạng thái thêm card mới và clear input
     toggleNewCardForm()
@@ -81,7 +118,19 @@ function Columns({ column, createNewCard, deleteColumnDetails }) {
       confirmationKeyword: column.title
 
     }).then(() => {
-      deleteColumnDetails(column._id)
+      // Cập nhật lại state board
+      // Tương tự đoạn xử lý moveColumn bên trên nên không ảnh hưởng Redux toolkit Immutability
+      const newBoard = { ...board }
+      newBoard.columns = newBoard.columns.filter(c => c._id !== column._id)
+      newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== column._id)
+      // setBoard(newBoard)
+      dispatch(updateCurrentActiveBoard(newBoard))
+
+      // call API
+      deleteColumnDetailsAPI(column._id).then(res => {
+        toast.success(res?.deleteResult)
+      })
+
     }).catch(() => { })
   }
 
@@ -264,4 +313,4 @@ function Columns({ column, createNewCard, deleteColumnDetails }) {
   )
 }
 
-export default Columns
+export default Column
