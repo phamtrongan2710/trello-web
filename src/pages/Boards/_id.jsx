@@ -19,6 +19,7 @@ import {
   selectCurrentActiveBoard
 } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 
 function Board() {
   const dispatch = useDispatch()
@@ -26,12 +27,14 @@ function Board() {
   // const [board, setBoard] = useState(null)
   const board = useSelector(selectCurrentActiveBoard)
 
+  const { boardId } = useParams()
+
   useEffect(() => {
     // tạm thời gán cứng boardId
-    const boardId = '67a3963c7fc4e7ceb018e44c'
+    // const boardId = '67a3963c7fc4e7ceb018e44c'
     // call API
     dispatch(fetchBoardDetailsAPI(boardId))
-  }, [dispatch])
+  }, [dispatch, boardId])
 
   // Function này có nhiệm vụ gọi API di chuyển column và tạo mới state board
   // Chỉ cần gọi API để cập nhật mảng columnOrderIds của Board chứ nó
