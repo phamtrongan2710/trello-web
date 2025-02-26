@@ -180,6 +180,7 @@ function Column({ column }) {
 
             <Menu
               id="basic-menu-column-dropdown"
+              data-no-dnd="true"
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}

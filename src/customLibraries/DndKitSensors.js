@@ -3,7 +3,7 @@ import {
   TouchSensor as DndKitTouchSensor
 } from '@dnd-kit/core'
 
-// Block DnD event propagation if element have "data-no-dnd" attribute
+// Block DnD event propagation if element have "data-no-dnd" attribute (64.1)
 const handler = ({ nativeEvent: event }) => {
   let cur = event.target
   while (cur) {
