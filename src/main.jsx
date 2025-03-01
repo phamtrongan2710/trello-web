@@ -1,4 +1,5 @@
 import CssBaseline from '@mui/material/CssBaseline'
+import GlobalStyles from '@mui/material/GlobalStyles'
 import { createRoot } from 'react-dom/client'
 import App from '~/App.jsx'
 import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles'
@@ -38,6 +39,7 @@ createRoot(document.getElementById('root')).render(
             confirmationButtonProps: { color: 'inherit', variant: 'outlined' },
             cancellationButtonProps: { color: 'inherit' }
           }}>
+            <GlobalStyles styles={{ a: { textDecoration: 'none' } }} />
             <CssBaseline />
             <App />
             <ToastContainer
