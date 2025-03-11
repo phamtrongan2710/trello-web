@@ -4,8 +4,7 @@ import react from "file:///C:/Users/phamt/Desktop/web/mern/trello-web/node_modul
 import svgr from "file:///C:/Users/phamt/Desktop/web/mern/trello-web/node_modules/vite-plugin-svgr/dist/index.js";
 var vite_config_default = defineConfig({
   define: {
-    // cho phép sử dụng process.env
-    // eslint-disable-next-line no-undef
+    // cho phép sử dụng process.env 
     "process.env": process.env
   },
   plugins: [
