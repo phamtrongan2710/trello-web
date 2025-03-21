@@ -34,7 +34,8 @@ const SidebarItem = styled(Box)(({ theme }) => ({
   padding: '12px 16px',
   borderRadius: '8px',
   '&:hover': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#33485D' : theme.palette.grey[300]
+    backgroundColor:
+      theme.palette.mode === 'dark' ? '#33485D' : theme.palette.grey[300]
   },
   '&.active': {
     color: theme.palette.mode === 'dark' ? '#90caf9' : '#0c66e4',
@@ -61,6 +62,11 @@ function Boards() {
    */
   const page = parseInt(query.get('page') || '1', 10)
 
+  const updateStateData = res => {
+    setBoards(res.boards || [])
+    setTotalBoards(res.totalBoards || 0)
+  }
+
   useEffect(() => {
     // // Fake tạm 16 cái item thay cho boards
     // // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
@@ -71,12 +77,13 @@ function Boards() {
     // Mỗi khi URL thay đổi ví dụ như khi chúng ta chuyển trang thì cái location.search lấy từ hook useLocation của react-router-dom cũng thay đổi theo, đồng nghĩa hàm useEffect sẽ chạy lại và fetch lại API theo đúng page mới vì cái location.search đã nằm trong dependencies của useEffect
 
     // Gọi API lấy danh sách boards ở đây...
-    fetchBoardsAPI(location.search).then(res => {
-      setBoards(res.boards || [])
-      setTotalBoards(res.totalBoards || 0)
-    })
-
+    fetchBoardsAPI(location.search).then(updateStateData)
   }, [location.search])
+
+  const afterCreateNewBoard = () => {
+    // Đơn giản là cứ fetch lại danh sách board tương tự trong useEffect
+    fetchBoardsAPI(location.search).then(updateStateData)
+  }
 
   // Lúc chưa tồn tại boards > đang chờ gọi api thì hiện loading
   if (!boards) {
@@ -105,27 +112,35 @@ function Boards() {
             </Stack>
             <Divider sx={{ my: 1 }} />
             <Stack direction="column" spacing={1}>
-              <SidebarCreateBoardModal />
+              <SidebarCreateBoardModal
+                afterCreateNewBoard={afterCreateNewBoard}
+              />
             </Stack>
           </Grid>
 
           <Grid xs={12} sm={9}>
-            <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>Your boards:</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>
+              Your boards:
+            </Typography>
 
             {/* Trường hợp gọi API nhưng không tồn tại cái board nào trong Database trả về */}
-            {boards?.length === 0 &&
-              <Typography variant="span" sx={{ fontWeight: 'bold', mb: 3 }}>No result found!</Typography>
-            }
+            {boards?.length === 0 && (
+              <Typography variant="span" sx={{ fontWeight: 'bold', mb: 3 }}>
+                No result found!
+              </Typography>
+            )}
 
             {/* Trường hợp gọi API và có boards trong Database trả về thì render danh sách boards */}
-            {boards?.length > 0 &&
+            {boards?.length > 0 && (
               <Grid container spacing={2}>
-                {boards.map(b =>
+                {boards.map(b => (
                   <Grid xs={2} sm={3} md={4} key={b._id}>
                     <Card sx={{ width: '250px' }}>
                       {/* Ý tưởng mở rộng về sau làm ảnh Cover cho board nhé */}
                       {/* <CardMedia component="img" height="100" image="https://picsum.photos/100" /> */}
-                      <Box sx={{ height: '50px', backgroundColor: randomColor() }}></Box>
+                      <Box
+                        sx={{ height: '50px', backgroundColor: randomColor() }}
+                      ></Box>
 
                       <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
                         <Typography gutterBottom variant="h6" component="div">
@@ -134,7 +149,12 @@ function Boards() {
                         <Typography
                           variant="body2"
                           color="text.secondary"
-                          sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                          sx={{
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                            textOverflow: 'ellipsis'
+                          }}
+                        >
                           {b?.description}
                         </Typography>
                         <Box
@@ -147,19 +167,28 @@ function Boards() {
                             justifyContent: 'flex-end',
                             color: 'primary.main',
                             '&:hover': { color: 'primary.light' }
-                          }}>
+                          }}
+                        >
                           Go to board <ArrowRightIcon fontSize="small" />
                         </Box>
                       </CardContent>
                     </Card>
                   </Grid>
-                )}
+                ))}
               </Grid>
-            }
+            )}
 
             {/* Trường hợp gọi API và có totalBoards trong Database trả về thì render khu vực phân trang  */}
-            {(totalBoards > 0) &&
-              <Box sx={{ my: 3, pr: 5, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            {totalBoards > 0 && (
+              <Box
+                sx={{
+                  my: 3,
+                  pr: 5,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end'
+                }}
+              >
                 <Pagination
                   size="large"
                   color="secondary"
@@ -170,16 +199,18 @@ function Boards() {
                   // Giá trị của page hiện tại đang đứng
                   page={page}
                   // Render các page item và đồng thời cũng là những cái link để chúng ta click chuyển trang
-                  renderItem={(item) => (
+                  renderItem={item => (
                     <PaginationItem
                       component={Link}
-                      to={`/boards${item.page === DEFAULT_PAGE ? '' : `?page=${item.page}`}`}
+                      to={`/boards${
+                        item.page === DEFAULT_PAGE ? '' : `?page=${item.page}`
+                      }`}
                       {...item}
                     />
                   )}
                 />
               </Box>
-            }
+            )}
           </Grid>
         </Grid>
       </Box>
