@@ -18,12 +18,15 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
+import ActiveCard from '~/components/Modal/ActiveCard/ActiveCard'
+import { selectCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
 
 function Board() {
   const dispatch = useDispatch()
   // không dùng state của component nữa mà chuyển qua dùng state của redux
   // const [board, setBoard] = useState(null)
   const board = useSelector(selectCurrentActiveBoard)
+  const activeCard = useSelector(selectCurrentActiveCard)
 
   const { boardId } = useParams()
 
@@ -36,7 +39,7 @@ function Board() {
 
   // Function này có nhiệm vụ gọi API di chuyển column và tạo mới state board
   // Chỉ cần gọi API để cập nhật mảng columnOrderIds của Board chứ nó
-  const moveColumn = (dndOrderedColumns) => {
+  const moveColumn = dndOrderedColumns => {
     // Cập nhật lại state board
     const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
 
@@ -51,12 +54,18 @@ function Board() {
     dispatch(updateCurrentActiveBoard(newBoard))
 
     // Gọi API update board
-    updateBoardDetailsAPI(newBoard._id, { columnOrderIds: dndOrderedColumnsIds })
+    updateBoardDetailsAPI(newBoard._id, {
+      columnOrderIds: dndOrderedColumnsIds
+    })
   }
 
   // Di chuyển card trong một column
   // Chỉ cần gọi API cập nhật cardOrderIds của column chứa nó
-  const moveCardInsideColumn = (dndOrderedCards, dndOrderedCardIds, columnId) => {
+  const moveCardInsideColumn = (
+    dndOrderedCards,
+    dndOrderedCardIds,
+    columnId
+  ) => {
     // Cập nhật lại state board
     /**
      * Error: Cannot assign to read only property 'cards'
@@ -64,7 +73,9 @@ function Board() {
      */
     // const newBoard = { ...board }
     const newBoard = cloneDeep(board)
-    const columnToUpdate = newBoard.columns.find(column => column._id === columnId)
+    const columnToUpdate = newBoard.columns.find(
+      column => column._id === columnId
+    )
     if (columnToUpdate) {
       columnToUpdate.cards = dndOrderedCards
       columnToUpdate.cardOrderIds = dndOrderedCardIds
@@ -82,7 +93,12 @@ function Board() {
    * 2. Cập nhật cardOrderIds của Column tiếp theo (thêm _id vào mảng)
    * 3. Cập nhật lại columnId của card đã kéo
    */
-  const moveCardToDifferentColumn = (currentCardId, prevColumnId, nextColumnId, dndOrderedColumns) => {
+  const moveCardToDifferentColumn = (
+    currentCardId,
+    prevColumnId,
+    nextColumnId,
+    dndOrderedColumns
+  ) => {
     // Cập nhật lại state board
     const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
 
@@ -94,7 +110,9 @@ function Board() {
     dispatch(updateCurrentActiveBoard(newBoard))
 
     // Gọi API xử lý
-    let prevCardOrderIds = dndOrderedColumns.find(c => c._id === prevColumnId)?.cardOrderIds
+    let prevCardOrderIds = dndOrderedColumns.find(
+      c => c._id === prevColumnId
+    )?.cardOrderIds
     // Column rỗng thì có placeholder card -> cần xóa trước khi đẩy dữ liệu về cho BE
     if (prevCardOrderIds[0].includes('placeholder-card')) prevCardOrderIds = []
 
@@ -103,7 +121,8 @@ function Board() {
       prevColumnId,
       prevCardOrderIds,
       nextColumnId,
-      nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)?.cardOrderIds
+      nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)
+        ?.cardOrderIds
     })
   }
 
@@ -113,11 +132,14 @@ function Board() {
 
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
+      {/** Modal active card: check đóng/mở dựa theo điều kiện có tồn tại data activeCard lưu trong Redux hay không thì mới rendẻ. Mỗi thời điểm chỉ tồn tại một cái modal active card đang active */}
+      {activeCard && <ActiveCard />}
+
+      {/** Các thành phần còn lại của board detail */}
       <AppBar />
       <BoardBar board={board} />
       <BoardContent
         board={board}
-
         // 3 trường hợp move ở đây thì giữ nguyên để code xử lý kéo thả ở phần BoardContent không bị quá dài khi đọc code, maintain
         moveColumn={moveColumn}
         moveCardInsideColumn={moveCardInsideColumn}

@@ -1,4 +1,3 @@
-import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
@@ -17,20 +16,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { selectCurrentUser, updateUserAPI } from '~/redux/user/userSlice'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
-
-// Xử lý custom đẹp cái input file ở đây: https://mui.com/material-ui/react-button/#file-upload
-// Ngoài ra note thêm lib này từ docs của MUI nó recommend nếu cần dùng: https://github.com/viclafouch/mui-file-input
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1
-})
+import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
 
 function AccountTab() {
   const dispatch = useDispatch()
@@ -42,29 +28,34 @@ function AccountTab() {
     displayName: currentUser?.displayName
   }
   // Sử dụng defaultValues để set giá trị mặc định cho các field cần thiết
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
     defaultValues: initialGeneralForm // truyền giá trị mặc định các field name register bên dưới
   })
 
-  const submitChangeGeneralInformation = (data) => {
+  const submitChangeGeneralInformation = data => {
     const { displayName } = data
 
     // Nếu không có sự thay đổi gì về displayname thì không làm gì cả
     if (displayName === currentUser?.displayName) return
 
     // Gọi API...
-    toast.promise(
-      dispatch(updateUserAPI({ displayName })),
-      { pending: 'Updating...' }
-    ).then(res => {
-      // Đoạn này phải kiểm tra nếu không có lỗi (update thành công) thì mới thực hiện các hành động cần thiết
-      if (!res.error) {
-        toast.success('User updated successfully!')
-      }
-    })
+    toast
+      .promise(dispatch(updateUserAPI({ displayName })), {
+        pending: 'Updating...'
+      })
+      .then(res => {
+        // Đoạn này phải kiểm tra nếu không có lỗi (update thành công) thì mới thực hiện các hành động cần thiết
+        if (!res.error) {
+          toast.success('User updated successfully!')
+        }
+      })
   }
 
-  const uploadAvatar = (e) => {
+  const uploadAvatar = e => {
     // Lấy file thông qua e.target?.files[0] và validate nó trước khi xử lý
     // console.log('e.target?.files[0]: ', e.target?.files[0])
     const error = singleFileValidator(e.target?.files[0])
@@ -83,37 +74,39 @@ function AccountTab() {
     // }
 
     // Gọi API...
-    toast.promise(
-      dispatch(updateUserAPI(reqData)),
-      { pending: 'Updating...' }
-    ).then(res => {
-      // Đoạn này phải kiểm tra nếu không có lỗi (update thành công) thì mới thực hiện các hành động cần thiết
-      if (!res.error) {
-        toast.success('User updated successfully!')
-      }
+    toast
+      .promise(dispatch(updateUserAPI(reqData)), { pending: 'Updating...' })
+      .then(res => {
+        // Đoạn này phải kiểm tra nếu không có lỗi (update thành công) thì mới thực hiện các hành động cần thiết
+        if (!res.error) {
+          toast.success('User updated successfully!')
+        }
 
-      // NOTE: dù có lỗi hoặc thành công thì cũng phải clear giá trị của file input, nếu không thì sẽ không thể chọn cùng 1 file
-      e.target.value = ''
-    })
-
+        // NOTE: dù có lỗi hoặc thành công thì cũng phải clear giá trị của file input, nếu không thì sẽ không thể chọn cùng 1 file
+        e.target.value = ''
+      })
   }
 
   return (
-    <Box sx={{
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
-      <Box sx={{
-        maxWidth: '1200px',
+    <Box
+      sx={{
+        width: '100%',
+        height: '100%',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: 3
-      }}>
+        justifyContent: 'center'
+      }}
+    >
+      <Box
+        sx={{
+          maxWidth: '1200px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 3
+        }}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Box>
             <Avatar
@@ -126,7 +119,8 @@ function AccountTab() {
                 component="label"
                 variant="contained"
                 size="small"
-                startIcon={<CloudUploadIcon />}>
+                startIcon={<CloudUploadIcon />}
+              >
                 Upload
                 <VisuallyHiddenInput type="file" onChange={uploadAvatar} />
               </Button>
@@ -134,12 +128,21 @@ function AccountTab() {
           </Box>
           <Box>
             <Typography variant="h6">{currentUser?.displayName}</Typography>
-            <Typography sx={{ color: 'grey' }}>@{currentUser?.username}</Typography>
+            <Typography sx={{ color: 'grey' }}>
+              @{currentUser?.username}
+            </Typography>
           </Box>
         </Box>
 
         <form onSubmit={handleSubmit(submitChangeGeneralInformation)}>
-          <Box sx={{ width: '400px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box
+            sx={{
+              width: '400px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2
+            }}
+          >
             <Box>
               <TextField
                 disabled
@@ -215,7 +218,8 @@ function AccountTab() {
                 type="submit"
                 variant="contained"
                 color="primary"
-                fullWidth>
+                fullWidth
+              >
                 Update
               </Button>
             </Box>
