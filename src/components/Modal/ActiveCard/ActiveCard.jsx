@@ -165,7 +165,7 @@ function ActiveCard() {
         </Box>
 
         {activeCard?.cover && (
-          <Box sx={{ mb: 4 }}>
+          <Box sx={{ mb: 4, overflow: 'hidden' }}>
             <img
               style={{
                 width: '100%',
