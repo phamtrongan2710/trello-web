@@ -11,8 +11,6 @@ import Starred from './Menus/Starred'
 import Templates from './Menus/Templates'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import Badge from '@mui/material/Badge'
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import Profiles from './Menus/Profiles'
@@ -21,22 +19,26 @@ import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import { Link } from 'react-router-dom'
+import Notifications from './Notifications/Notifications'
 
 function AppBar() {
   const [searchValue, setSearchValue] = useState('')
   return (
-    <Box sx={{
-      width: '100%',
-      height: (theme) => theme.trello.appBarHeight,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: 2,
-      paddingX: 2,
-      overflowX: 'auto',
-      '&::-webkit-scrollbar-track': { m: 2 },
-      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#2c3e50' : '#1565c0')
-    }}>
+    <Box
+      sx={{
+        width: '100%',
+        height: theme => theme.trello.appBarHeight,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 2,
+        paddingX: 2,
+        overflowX: 'auto',
+        '&::-webkit-scrollbar-track': { m: 2 },
+        bgcolor: theme =>
+          theme.palette.mode === 'dark' ? '#2c3e50' : '#1565c0'
+      }}
+    >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <Link to="/boards">
           <Tooltip title="Board List">
@@ -46,8 +48,16 @@ function AppBar() {
 
         <Link to="/">
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <SvgIcon component={TrelloLogo} fontSize="small" inheritViewBox sx={{ color: 'white' }} />
-            <Typography variant='span' sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}>
+            <SvgIcon
+              component={TrelloLogo}
+              fontSize="small"
+              inheritViewBox
+              sx={{ color: 'white' }}
+            />
+            <Typography
+              variant="span"
+              sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}
+            >
               Trello
             </Typography>
           </Box>
@@ -70,7 +80,6 @@ function AppBar() {
             Create
           </Button>
         </Box>
-
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -80,10 +89,10 @@ function AppBar() {
           type="text"
           size="small"
           value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
+          onChange={e => setSearchValue(e.target.value)}
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start" >
+              <InputAdornment position="start">
                 <SearchIcon sx={{ color: 'white' }} />
               </InputAdornment>
             ),
@@ -91,7 +100,10 @@ function AppBar() {
               <InputAdornment position="end">
                 <CloseIcon
                   fontSize="small"
-                  sx={{ color: searchValue ? 'white' : 'transparent', cursor: 'pointer' }}
+                  sx={{
+                    color: searchValue ? 'white' : 'transparent',
+                    cursor: 'pointer'
+                  }}
                   onClick={() => setSearchValue('')}
                 />
               </InputAdornment>
@@ -111,13 +123,11 @@ function AppBar() {
           }}
         />
 
+        {/**Dark/Light/System mode */}
         <ModeSelect />
 
-        <Tooltip title="Notification">
-          <Badge color="warning" variant="dot" sx={{ cursor: 'pointer' }}>
-            <NotificationsNoneIcon sx={{ color: 'white' }} />
-          </Badge>
-        </Tooltip>
+        {/* Xử lý hiển thị các thông báo */}
+        <Notifications />
 
         <Tooltip title="Help">
           <HelpOutlineIcon sx={{ cursor: 'pointer', color: 'white' }} />
@@ -125,7 +135,7 @@ function AppBar() {
 
         <Profiles />
       </Box>
-    </Box >
+    </Box>
   )
 }
 
