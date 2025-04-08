@@ -28,17 +28,28 @@ let persistor = persistStore(store)
 import { injectStore } from '~/utils/authorizedAxios'
 injectStore(store)
 
+// Cấu hình socket.io phía client tại đây và export ra biến socketIoInstance
+// https://socket.io/how-to/use-with-react
+import { io } from 'socket.io-client'
+import { API_ROOT } from './utils/constants'
+export const socketIoInstance = io(API_ROOT)
+
 createRoot(document.getElementById('root')).render(
-  <BrowserRouter basename='/'>
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
+  <Provider store={store}>
+    <PersistGate persistor={persistor}>
+      <BrowserRouter basename="/">
         <CssVarsProvider theme={theme}>
-          <ConfirmProvider defaultOptions={{
-            allowClose: false,
-            dialogProps: { maxWidth: 'xs' },
-            confirmationButtonProps: { color: 'inherit', variant: 'outlined' },
-            cancellationButtonProps: { color: 'inherit' }
-          }}>
+          <ConfirmProvider
+            defaultOptions={{
+              allowClose: false,
+              dialogProps: { maxWidth: 'xs' },
+              confirmationButtonProps: {
+                color: 'inherit',
+                variant: 'outlined'
+              },
+              cancellationButtonProps: { color: 'inherit' }
+            }}
+          >
             <GlobalStyles styles={{ a: { textDecoration: 'none' } }} />
             <CssBaseline />
             <App />
@@ -49,7 +60,7 @@ createRoot(document.getElementById('root')).render(
             />
           </ConfirmProvider>
         </CssVarsProvider>
-      </PersistGate>
-    </Provider>
-  </BrowserRouter>
+      </BrowserRouter>
+    </PersistGate>
+  </Provider>
 )
