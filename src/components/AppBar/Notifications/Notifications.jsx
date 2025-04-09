@@ -20,7 +20,7 @@ import {
   updateBoardInvitationAPI,
   addNotification
 } from '~/redux/notifications/notificationsSlice'
-import { socketIoInstance } from '~/main'
+import { socketIoInstance } from '~/socketClient'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 
@@ -68,7 +68,7 @@ function Notifications() {
         dispatch(addNotification(invitation))
         // B2: cập nhật trạng thái newNotification = true khi có thông báo đến
         setNewNotification(true)
-        console.log(newNotification)
+        // console.log(newNotification)
       }
     }
 
